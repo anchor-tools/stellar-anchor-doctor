@@ -280,17 +280,18 @@
         <section id="quick-start">
           <div class="eyebrow">Start here</div>
           <h2>Run your first audit</h2>
-          <p>Use <code>npx</code> to run without a global install. Supply the anchor hostname (with or without an HTTPS scheme).</p>
-          <pre><code>npx stellar-anchor-doctor anchor.example.com
+          <p>The npm package is not published yet. Clone the repository, build the CLI, then supply an anchor hostname (with or without an HTTPS scheme).</p>
+          <pre><code>git clone https://github.com/anchor-tools/stellar-anchor-doctor.git
+cd stellar-anchor-doctor
+npm ci
+npm run build
+node ./bin/stellar-anchor-doctor.js anchor.example.com
 
 # Use the Testnet network passphrase
-npx stellar-anchor-doctor testanchor.stellar.org --testnet
+node ./bin/stellar-anchor-doctor.js testanchor.stellar.org --testnet
 
 # Save machine-readable output
-npx stellar-anchor-doctor anchor.example.com --format json</code></pre>
-          <h3>Install globally</h3>
-          <pre><code>npm install --global stellar-anchor-doctor
-stellar-anchor-doctor anchor.example.com</code></pre>
+node ./bin/stellar-anchor-doctor.js anchor.example.com --format json</code></pre>
           <div class="callout notice">
             <p><strong>Before running:</strong> only audit services you own or have permission to test. The tool contacts the target's published URLs, including an SEP-10 challenge request when an auth server is declared.</p>
           </div>

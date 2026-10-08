@@ -7,12 +7,12 @@
 
 Diagnostic scanner for live Stellar Anchor deployments. Checks anchor configuration, selected SEP endpoints, basic SEP-10 challenge structure, CORS policies, and HTTPS/HSTS across **SEP-1**, **SEP-10**, **SEP-24**, **SEP-38**, **SEP-6**, and **Transport Security**.
 
-[**Read the documentation site**](https://anchor-tools.github.io/stellar-anchor-doctor/) · [Contributing](./CONTRIBUTING.md) · [Wave task backlog](./DRIPS_WAVE.md)
+[**Read the documentation site**](https://stellar-anchor-doctor-docs.vercel.app/) · [Contributing](./CONTRIBUTING.md) · [Wave task backlog](./DRIPS_WAVE.md)
 
-The documentation lives in [`docs/index.html`](./docs/index.html) and is published to GitHub Pages when changes reach `main`.
+The documentation lives in [`docs/index.html`](./docs/index.html) and is published at [stellar-anchor-doctor-docs.vercel.app](https://stellar-anchor-doctor-docs.vercel.app/). Changes to `main` are also published to [GitHub Pages](https://anchor-tools.github.io/stellar-anchor-doctor/).
 
 ```console
-$ npx stellar-anchor-doctor testanchor.stellar.org
+$ node ./bin/stellar-anchor-doctor.js testanchor.stellar.org
 
 🩺 Stellar Anchor Doctor — Audit Report for testanchor.stellar.org
 Timestamp: 2026-10-08T05:30:00.000Z | Duration: 642ms
@@ -75,14 +75,14 @@ While [`stellar-toml-lint`](https://github.com/anchor-tools/stellar-toml-lint) l
 
 ## Installation
 
-### Via npm (Global)
-```bash
-npm install -g stellar-anchor-doctor
-```
+The npm package is not published yet. To use the CLI, build it from a source checkout:
 
-### Run directly with `npx`
 ```bash
-npx stellar-anchor-doctor <domain>
+git clone https://github.com/anchor-tools/stellar-anchor-doctor.git
+cd stellar-anchor-doctor
+npm ci
+npm run build
+node ./bin/stellar-anchor-doctor.js <domain>
 ```
 
 ---
@@ -91,28 +91,28 @@ npx stellar-anchor-doctor <domain>
 
 ```bash
 # Audit an anchor on Stellar Public Network
-stellar-anchor-doctor anchor.example.com
+node ./bin/stellar-anchor-doctor.js anchor.example.com
 
 # Audit an anchor on Stellar Testnet
-stellar-anchor-doctor testanchor.stellar.org --testnet
+node ./bin/stellar-anchor-doctor.js testanchor.stellar.org --testnet
 
 # Output report as JSON (for CI/CD pipelines and dashboards)
-stellar-anchor-doctor anchor.example.com --format json
+node ./bin/stellar-anchor-doctor.js anchor.example.com --format json
 
 # Output report as Markdown (for GitHub Issue/PR comments)
-stellar-anchor-doctor anchor.example.com --format markdown
+node ./bin/stellar-anchor-doctor.js anchor.example.com --format markdown
 
 # Treat warnings as errors (fail with exit code 1)
-stellar-anchor-doctor anchor.example.com --strict
+node ./bin/stellar-anchor-doctor.js anchor.example.com --strict
 
 # Skip specific check suites
-stellar-anchor-doctor anchor.example.com --skip sep-38,sep-6
+node ./bin/stellar-anchor-doctor.js anchor.example.com --skip sep-38,sep-6
 
 # Customize network request timeout (in milliseconds)
-stellar-anchor-doctor anchor.example.com --timeout 12000
+node ./bin/stellar-anchor-doctor.js anchor.example.com --timeout 12000
 
 # List all available checks and specifications
-stellar-anchor-doctor list-checks
+node ./bin/stellar-anchor-doctor.js list-checks
 ```
 
 ### CLI Options
@@ -158,7 +158,7 @@ These checks cover selected fields and response shapes, not every requirement in
 You can import `stellar-anchor-doctor` as a library in your Node.js or TypeScript projects:
 
 ```typescript
-import { DoctorEngine } from 'stellar-anchor-doctor';
+import { DoctorEngine } from './dist/index.js';
 
 const engine = new DoctorEngine();
 const report = await engine.runAudit({
@@ -180,10 +180,10 @@ for (const finding of report.findings) {
 
 ## Drips Wave
 
-`stellar-anchor-doctor` is maintained by [Anchor Tools](https://github.com/anchor-tools). The repository includes proposed, scoped contributor tasks for Drips Wave:
+`stellar-anchor-doctor` is maintained by [Anchor Tools](https://github.com/anchor-tools). The repository has published, scoped contributor tasks for Drips Wave:
 
-- **Documentation site:** [Read the project guide](https://anchor-tools.github.io/stellar-anchor-doctor/).
-- **Proposed tasks:** See [`DRIPS_WAVE.md`](./DRIPS_WAVE.md), then check live issues and current program rules before starting work.
+- **Documentation site:** [Read the project guide](https://stellar-anchor-doctor-docs.vercel.app/).
+- **Open tasks:** See [`DRIPS_WAVE.md`](./DRIPS_WAVE.md) and the [live GitHub issues](https://github.com/anchor-tools/stellar-anchor-doctor/issues), then check current program rules before starting work.
 - **Contribution guide:** See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ---

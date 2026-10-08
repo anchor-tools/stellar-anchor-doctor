@@ -13,11 +13,11 @@ body:
     id: complexity
     attributes:
       label: Estimated Effort
-      description: Maintainer estimate for planning; check current Drips Wave rules for any program-specific classifications.
+      description: Select the Drips complexity estimate; after creating the issue, add the matching Trivial, Medium, or High label.
       options:
-        - "Small - Documentation, focused bug fix, or isolated check"
-        - "Medium - New reporting format, broader check behavior, or test harness"
-        - "Large - New protocol suite or architectural feature"
+        - "Trivial - 100 points: small, clearly bounded change"
+        - "Medium - 150 points: standard feature or multi-file logic"
+        - "High - 200 points: complex integration or architectural change"
     validations:
       required: true
 
@@ -48,7 +48,7 @@ body:
       description: Checklist of verifiable, testable conditions required for this PR to be accepted.
       value: |
         - [ ] Implementation follows project TypeScript and linting standards.
-        - [ ] Unit tests added under `tests/` with 100% pass rate.
+        - [ ] Tests cover the changed behavior and the project test suite passes.
         - [ ] Error messages provide actionable remediation steps.
         - [ ] Documentation updated in `README.md` if CLI flags or checks were added.
     validations:

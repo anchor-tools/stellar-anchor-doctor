@@ -1,0 +1,62 @@
+name: Drips Wave Issue
+description: Propose a well-scoped task or feature for Drips Wave sprints
+title: "[Wave]: "
+labels: ["Stellar Wave", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a task for the Drips Wave program!
+        Please fill out this template with clear acceptance criteria and scope.
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity Level
+      description: Drips Wave complexity tier determining base reward points
+      options:
+        - "Trivial (100 points) - Small bug fix, doc update, or minor check addition"
+        - "Medium (150 points) - New check rule, new reporter format, or test harness addition"
+        - "High (200 points) - New protocol check suite (e.g. SEP-12/SEP-31), major architectural feature"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Problem Context & Rationale
+      description: What problem does this solve for Stellar anchors, wallet devs, or users?
+      placeholder: "e.g., Anchors often fail to validate SEP-12 KYC schemas, causing interoperability errors..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope Boundaries (Goals & Non-Goals)
+      description: Define what is in-scope and what is explicitly out of scope for this issue.
+      placeholder: |
+        - In-scope: Implement check for GET /customer endpoint response.
+        - Non-goals: Do not handle customer document upload (PUT /customer binary files).
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Checklist of verifiable, testable conditions required for this PR to be accepted.
+      value: |
+        - [ ] Implementation follows project TypeScript and linting standards.
+        - [ ] Unit tests added under `tests/` with 100% pass rate.
+        - [ ] Error messages provide actionable remediation steps.
+        - [ ] Documentation updated in `README.md` if CLI flags or checks were added.
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-hints
+    attributes:
+      label: Implementation Guidance & Key Files
+      description: Point contributors toward relevant files, existing check modules, or spec references.
+      placeholder: "See `src/checks/sep24.ts` for reference implementation. Read SEP-12 specification at https://..."

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Stellar Anchor Documentation
+    url: https://developers.stellar.org/docs/anchoring-assets/
+    about: Official Stellar Foundation documentation for Anchors
+  - name: Drips Wave
+    url: https://www.drips.network/wave
+    about: Drips Wave program information

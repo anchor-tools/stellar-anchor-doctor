@@ -1,0 +1,64 @@
+{
+  "name": "stellar-anchor-doctor",
+  "version": "1.0.0",
+  "description": "Comprehensive CLI scanner and diagnostic auditor for live Stellar Anchor deployments (SEP-1, SEP-10, SEP-24, SEP-38, TLS, and CORS)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "stellar-anchor-doctor": "./bin/stellar-anchor-doctor.js"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsup && tsc --emitDeclarationOnly --outDir dist",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "start": "node ./bin/stellar-anchor-doctor.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anchor-tools/stellar-anchor-doctor.git"
+  },
+  "keywords": [
+    "stellar",
+    "soroban",
+    "anchor",
+    "sep-1",
+    "sep-6",
+    "sep-10",
+    "sep-24",
+    "sep-38",
+    "linter",
+    "audit",
+    "doctor",
+    "healthcheck",
+    "drips-wave"
+  ],
+  "author": "Anchor Tools Maintainers",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/anchor-tools/stellar-anchor-doctor/issues"
+  },
+  "homepage": "https://github.com/anchor-tools/stellar-anchor-doctor#readme",
+  "dependencies": {
+    "@stellar/stellar-base": "^15.0.0",
+    "commander": "^14.0.3",
+    "picocolors": "^1.1.1",
+    "smol-toml": "^1.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

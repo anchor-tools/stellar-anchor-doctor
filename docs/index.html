@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7faf9">
+    <meta
+      name="description"
+      content="Documentation for Stellar Anchor Doctor, an open-source CLI that checks live Stellar anchor endpoints against selected SEP expectations."
+    >
+    <title>Stellar Anchor Doctor — Documentation</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #122b31;
+        --muted: #536a70;
+        --line: #dce7e5;
+        --paper: #ffffff;
+        --canvas: #f4f8f7;
+        --teal: #087e78;
+        --teal-dark: #075e5a;
+        --mint: #e3f4ef;
+        --blue: #245c86;
+        --amber: #8c5a08;
+        --red: #a63232;
+        --code: #102c34;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        scroll-behavior: smooth;
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; color: var(--ink); background: var(--canvas); line-height: 1.65; }
+      a { color: var(--teal-dark); text-underline-offset: 0.18em; }
+      a:hover { color: var(--blue); }
+      a:focus-visible, summary:focus-visible { outline: 3px solid #e7a72d; outline-offset: 3px; }
+      code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; }
+      code { font-size: 0.92em; }
+      pre {
+        overflow-x: auto;
+        margin: 1.1rem 0 0;
+        padding: 1.1rem 1.25rem;
+        border: 1px solid #28444a;
+        border-radius: 12px;
+        color: #e4f3ee;
+        background: var(--code);
+        line-height: 1.6;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        z-index: 2;
+        padding: 0.6rem 0.8rem;
+        transform: translateY(-150%);
+        color: white;
+        background: var(--code);
+      }
+      .skip-link:focus { transform: translateY(0); }
+      .site-header {
+        border-bottom: 1px solid var(--line);
+        background: rgb(255 255 255 / 92%);
+      }
+      .header-inner, main, .footer-inner { width: min(1120px, calc(100% - 2.5rem)); margin: 0 auto; }
+      .header-inner {
+        display: flex;
+        min-height: 68px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+      .brand { color: var(--ink); font-size: 0.98rem; font-weight: 760; text-decoration: none; }
+      .brand-mark { margin-right: 0.45rem; }
+      .top-nav { display: flex; flex-wrap: wrap; gap: 1.2rem; font-size: 0.9rem; }
+      .top-nav a { color: var(--muted); font-weight: 620; text-decoration: none; }
+      .top-nav a:hover { color: var(--teal-dark); }
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: clamp(3rem, 8vw, 6.4rem) 0 4.4rem;
+        background:
+          radial-gradient(ellipse at 82% 12%, rgb(121 203 181 / 24%), transparent 33%),
+          linear-gradient(135deg, #f4faf8 0%, #eaf5f2 48%, #f5f8f6 100%);
+        border-bottom: 1px solid var(--line);
+      }
+      .hero-inner { position: relative; z-index: 1; max-width: 790px; }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 1rem;
+        color: var(--teal-dark);
+        font-size: 0.8rem;
+        font-weight: 780;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+      h1, h2, h3 { line-height: 1.2; }
+      h1 { max-width: 760px; margin: 0; font-size: clamp(2.6rem, 7vw, 4.5rem); letter-spacing: -0.055em; }
+      .hero-copy { max-width: 700px; margin: 1.4rem 0 0; color: #405a61; font-size: clamp(1.05rem, 2vw, 1.25rem); }
+      .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.8rem; }
+      .button {
+        display: inline-flex;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        padding: 0.65rem 1rem;
+        border: 1px solid var(--teal);
+        border-radius: 8px;
+        color: white;
+        background: var(--teal);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .button:hover { color: white; background: var(--teal-dark); }
+      .button.secondary { color: var(--teal-dark); background: transparent; }
+      .button.secondary:hover { background: var(--mint); }
+      .hero-meta { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.6rem; }
+      .pill { padding: 0.25rem 0.65rem; border: 1px solid #cde3dc; border-radius: 999px; color: #315950; background: rgb(255 255 255 / 66%); font-size: 0.82rem; font-weight: 650; }
+
+      main { padding: 2.5rem 0 5rem; }
+      .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: start; gap: 2.5rem; }
+      .side-nav {
+        position: sticky;
+        top: 1.25rem;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--paper);
+      }
+      .side-nav strong { display: block; margin-bottom: 0.6rem; font-size: 0.82rem; letter-spacing: 0.07em; text-transform: uppercase; }
+      .side-nav ul { display: grid; gap: 0.22rem; margin: 0; padding: 0; list-style: none; }
+      .side-nav a { display: block; padding: 0.33rem 0.4rem; border-radius: 5px; color: var(--muted); font-size: 0.91rem; text-decoration: none; }
+      .side-nav a:hover { color: var(--teal-dark); background: var(--mint); }
+      article { min-width: 0; }
+      section { scroll-margin-top: 1.5rem; padding: 0.4rem 0 2.8rem; }
+      section + section { padding-top: 2.1rem; border-top: 1px solid var(--line); }
+      h2 { margin: 0 0 0.8rem; font-size: clamp(1.6rem, 3vw, 2rem); letter-spacing: -0.03em; }
+      h3 { margin: 1.65rem 0 0.5rem; font-size: 1.12rem; }
+      p { margin: 0.65rem 0; color: #425a60; }
+      .lead { max-width: 760px; font-size: 1.08rem; }
+      .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.3rem; }
+      .card {
+        padding: 1.1rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--paper);
+      }
+      .card h3 { margin: 0 0 0.4rem; }
+      .card p { margin: 0; font-size: 0.96rem; }
+      .table-wrap { overflow-x: auto; margin-top: 1.1rem; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+      table { width: 100%; border-collapse: collapse; text-align: left; }
+      th, td { min-width: 120px; padding: 0.8rem 0.95rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+      th { color: #375158; background: #f1f7f5; font-size: 0.83rem; letter-spacing: 0.04em; text-transform: uppercase; }
+      td { color: #40575d; font-size: 0.94rem; }
+      tr:last-child td { border-bottom: 0; }
+      td:first-child { color: var(--ink); font-weight: 700; white-space: nowrap; }
+      .callout { margin: 1.2rem 0; padding: 1rem 1.1rem; border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; background: #eaf2f8; }
+      .callout p { margin: 0; }
+      .callout.warning { border-color: #d49323; background: #fff6e5; }
+      .callout.warning strong { color: var(--amber); }
+      .callout.notice { border-color: #25917d; background: #e8f5f0; }
+      .callout.notice strong { color: var(--teal-dark); }
+      .option-list { display: grid; grid-template-columns: minmax(150px, 0.7fr) 1.5fr; gap: 0; margin-top: 1rem; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--paper); }
+      .option-list > div { padding: 0.72rem 0.9rem; border-bottom: 1px solid var(--line); }
+      .option-list > div:nth-last-child(-n + 2) { border-bottom: 0; }
+      .option-list .option { color: var(--ink); font-weight: 700; }
+      .option-list .description { color: var(--muted); }
+      .steps { padding-left: 1.3rem; color: #425a60; }
+      .steps li { padding-left: 0.25rem; margin: 0.5rem 0; }
+      details { margin-top: 0.8rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); }
+      summary { color: var(--ink); cursor: pointer; font-weight: 700; }
+      details p { margin-bottom: 0.2rem; }
+      .site-footer { padding: 1.5rem 0; border-top: 1px solid var(--line); background: var(--paper); }
+      .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.8rem 2rem; color: var(--muted); font-size: 0.9rem; }
+      .footer-inner p { margin: 0; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+      @media (max-width: 760px) {
+        .header-inner { align-items: flex-start; flex-direction: column; justify-content: center; gap: 0.45rem; padding: 0.8rem 0; }
+        .top-nav { gap: 0.85rem; }
+        .layout { grid-template-columns: 1fr; gap: 1.5rem; }
+        .side-nav { position: static; }
+        .side-nav ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 520px) {
+        .header-inner, main, .footer-inner { width: min(100% - 1.4rem, 1120px); }
+        .card-grid { grid-template-columns: 1fr; }
+        .option-list { grid-template-columns: minmax(0, 1fr); }
+        .option-list > div { border-bottom: 0; }
+        .option-list .description { padding-top: 0; border-bottom: 1px solid var(--line); }
+        .option-list > div:nth-last-child(2) { border-bottom: 0; }
+        .side-nav ul { grid-template-columns: 1fr 1fr; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        :root { scroll-behavior: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to documentation</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">🩺</span> Stellar Anchor Doctor</a>
+        <nav class="top-nav" aria-label="Main navigation">
+          <a href="#quick-start">Quick start</a>
+          <a href="#checks">Checks</a>
+          <a href="#contributing">Contributing</a>
+          <a href="https://github.com/anchor-tools/stellar-anchor-doctor">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="hero" id="top">
+      <div class="header-inner hero-inner">
+        <div class="eyebrow"><span aria-hidden="true">✦</span> Open-source Stellar tooling</div>
+        <h1>Find integration issues before your users do.</h1>
+        <p class="hero-copy">
+          Stellar Anchor Doctor checks a live anchor's published <code>stellar.toml</code>
+          and selected service endpoints against practical SEP expectations. Run it locally,
+          in CI, or use the library in your own Node.js tooling.
+        </p>
+        <div class="actions">
+          <a class="button" href="#quick-start">Get started</a>
+          <a class="button secondary" href="https://github.com/anchor-tools/stellar-anchor-doctor/issues">Explore issues</a>
+        </div>
+        <div class="hero-meta" aria-label="Project details">
+          <span class="pill">Node.js 18+</span>
+          <span class="pill">Apache-2.0</span>
+          <span class="pill">No API key required</span>
+        </div>
+      </div>
+    </div>
+
+    <main id="main" class="layout">
+      <nav class="side-nav" aria-label="Documentation sections">
+        <strong>On this page</strong>
+        <ul>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#quick-start">Quick start</a></li>
+          <li><a href="#checks">Diagnostic coverage</a></li>
+          <li><a href="#reports">Reports & scoring</a></li>
+          <li><a href="#options">CLI options</a></li>
+          <li><a href="#library">JavaScript API</a></li>
+          <li><a href="#limits">Scope & limitations</a></li>
+          <li><a href="#contributing">Contributing</a></li>
+        </ul>
+      </nav>
+
+      <article>
+        <section id="overview">
+          <div class="eyebrow">At a glance</div>
+          <h2>A practical first pass for anchor operators</h2>
+          <p class="lead">
+            Anchor Doctor is a small, extensible diagnostic tool for Stellar ecosystem
+            integrations. It follows service URLs published in <code>stellar.toml</code>,
+            checks selected endpoints, and returns findings with links and remediation
+            guidance where available.
+          </p>
+          <div class="card-grid">
+            <div class="card">
+              <h3>Live endpoint checks</h3>
+              <p>Check availability, CORS response headers, basic response shape, and transport settings.</p>
+            </div>
+            <div class="card">
+              <h3>Actionable output</h3>
+              <p>Review a terminal summary or produce JSON and Markdown reports for automation and review.</p>
+            </div>
+            <div class="card">
+              <h3>Designed for contributors</h3>
+              <p>Protocol suites are separate modules with mock-based tests; checks can be added without live test traffic.</p>
+            </div>
+            <div class="card">
+              <h3>Safe to evaluate</h3>
+              <p>Requests are read-only discovery and diagnostic requests. Do not use it as a substitute for a security assessment.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="quick-start">
+          <div class="eyebrow">Start here</div>
+          <h2>Run your first audit</h2>
+          <p>Use <code>npx</code> to run without a global install. Supply the anchor hostname (with or without an HTTPS scheme).</p>
+          <pre><code>npx stellar-anchor-doctor anchor.example.com
+
+# Use the Testnet network passphrase
+npx stellar-anchor-doctor testanchor.stellar.org --testnet
+
+# Save machine-readable output
+npx stellar-anchor-doctor anchor.example.com --format json</code></pre>
+          <h3>Install globally</h3>
+          <pre><code>npm install --global stellar-anchor-doctor
+stellar-anchor-doctor anchor.example.com</code></pre>
+          <div class="callout notice">
+            <p><strong>Before running:</strong> only audit services you own or have permission to test. The tool contacts the target's published URLs, including an SEP-10 challenge request when an auth server is declared.</p>
+          </div>
+        </section>
+
+        <section id="checks">
+          <div class="eyebrow">Coverage today</div>
+          <h2>Diagnostic checks</h2>
+          <p>The auditor first reads <code>/.well-known/stellar.toml</code>, then checks declared services. A suite with no declared endpoint reports that it was not configured rather than treating it as a failure.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Suite</th><th scope="col">What is checked</th><th scope="col">Specification</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>SEP-1</td>
+                  <td>File access, CORS, content type, TOML parsing, network passphrase, public-key checksums, currency declarations, and selected documentation fields.</td>
+                  <td><a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md">SEP-0001</a></td>
+                </tr>
+                <tr>
+                  <td>SEP-10</td>
+                  <td>Auth response, CORS, challenge XDR parsing, sequence number, timebounds presence/window, Manage Data operation presence, and signature presence.</td>
+                  <td><a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md">SEP-0010</a></td>
+                </tr>
+                <tr>
+                  <td>SEP-24</td>
+                  <td><code>/info</code> availability, CORS, and presence of deposit and withdrawal mappings.</td>
+                  <td><a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md">SEP-0024</a></td>
+                </tr>
+                <tr>
+                  <td>SEP-38</td>
+                  <td><code>/info</code> availability, CORS, assets array presence, and basic asset identifier format.</td>
+                  <td><a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0038.md">SEP-0038</a></td>
+                </tr>
+                <tr>
+                  <td>SEP-6</td>
+                  <td><code>/info</code> availability, CORS, and reporting configured deposit and withdrawal mappings.</td>
+                  <td><a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0006.md">SEP-0006</a></td>
+                </tr>
+                <tr>
+                  <td>Transport</td>
+                  <td>HTTPS endpoint schemes and whether the main host responds with an HSTS header.</td>
+                  <td><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security">HSTS reference</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="reports">
+          <div class="eyebrow">Understand results</div>
+          <h2>Report formats and score</h2>
+          <p>Choose <code>text</code> for people, <code>json</code> for scripts, or <code>markdown</code> for an issue or pull request. The command exits with code <code>1</code> when errors are found; <code>--strict</code> also makes warnings fail. Invalid command usage exits with code <code>2</code>.</p>
+          <p>The score starts at 100, subtracts 15 for each error and 5 for each warning, and is bounded between 0 and 100. Informational findings and passing checks do not change the score. Grades are a project-defined summary, not an external certification.</p>
+          <div class="callout warning">
+            <p><strong>Interpret the score carefully.</strong> It summarizes the findings this tool currently emits; it is not a measure of funds safety, regulatory compliance, service quality, or complete SEP conformance.</p>
+          </div>
+        </section>
+
+        <section id="options">
+          <div class="eyebrow">Command reference</div>
+          <h2>CLI options</h2>
+          <div class="option-list" aria-label="Command-line options">
+            <div class="option"><code>&lt;domain&gt;</code></div><div class="description">Anchor hostname to audit.</div>
+            <div class="option"><code>-f, --format &lt;format&gt;</code></div><div class="description"><code>text</code> (default), <code>json</code>, or <code>markdown</code>.</div>
+            <div class="option"><code>--strict</code></div><div class="description">Exit with code 1 for warnings as well as errors.</div>
+            <div class="option"><code>--skip &lt;checks&gt;</code></div><div class="description">Comma-separated suite IDs to skip, such as <code>sep-38,sep-6</code>.</div>
+            <div class="option"><code>--timeout &lt;ms&gt;</code></div><div class="description">Network request timeout in milliseconds (default: 8000).</div>
+            <div class="option"><code>--testnet</code></div><div class="description">Compare the published network passphrase with Stellar Testnet.</div>
+            <div class="option"><code>-q, --quiet</code></div><div class="description">For text output, show warnings, errors, and the summary; hide passes and notices.</div>
+            <div class="option"><code>--no-color</code></div><div class="description">Disable ANSI colors in text output.</div>
+            <div class="option"><code>-V, --version</code></div><div class="description">Print the installed CLI version.</div>
+            <div class="option"><code>list-checks</code></div><div class="description">List registered suites and their specification links.</div>
+          </div>
+          <pre><code>stellar-anchor-doctor anchor.example.com --format markdown --strict
+stellar-anchor-doctor anchor.example.com --skip sep-6,sep-38 --timeout 12000</code></pre>
+        </section>
+
+        <section id="library">
+          <div class="eyebrow">For developers</div>
+          <h2>JavaScript and TypeScript API</h2>
+          <p>Import the engine to run an audit and work with structured findings in your own Node.js application.</p>
+          <pre><code>import { DoctorEngine } from 'stellar-anchor-doctor';
+
+const engine = new DoctorEngine();
+const report = await engine.runAudit({
+  domain: 'anchor.example.com',
+  testnet: false,
+  timeout: 8000,
+});
+
+console.log(`${report.score}/100 (${report.grade})`);
+for (const finding of report.findings) {
+  if (finding.severity === 'error' || finding.severity === 'warn') {
+    console.log(finding.title, finding.remediation);
+  }
+}</code></pre>
+        </section>
+
+        <section id="limits">
+          <div class="eyebrow">Transparent by design</div>
+          <h2>Scope and limitations</h2>
+          <p>This is an early-stage diagnostic aid, not a conformance suite or a security audit. Network results are a point-in-time observation and may vary by region, time, and service availability.</p>
+          <ul class="steps">
+            <li>SEP checks validate selected fields and response shapes only; they do not exercise complete user flows.</li>
+            <li>SEP-10 currently checks that a challenge includes a Manage Data operation and at least one signature; it does <strong>not</strong> cryptographically verify the signer against <code>SIGNING_KEY</code> or validate every nonce and domain rule.</li>
+            <li>Some checks are intentionally shallow. A reported pass does not imply that every requirement in the linked SEP has been met.</li>
+            <li>The tool performs network requests to endpoints named by the target's public metadata. Use only on systems you are authorized to audit.</li>
+          </ul>
+          <p>Found an incorrect result? Please <a href="https://github.com/anchor-tools/stellar-anchor-doctor/issues/new?template=bug_report.yml">report a bug</a> with the suite, expected behavior, observed output, and a reproducible test case. Avoid sharing credentials or personal data.</p>
+        </section>
+
+        <section id="contributing">
+          <div class="eyebrow">Build with us</div>
+          <h2>Contributing and Drips Wave</h2>
+          <p>Contributions are welcome. Start with the <a href="https://github.com/anchor-tools/stellar-anchor-doctor/blob/main/CONTRIBUTING.md">contributor guide</a>, browse the <a href="https://github.com/anchor-tools/stellar-anchor-doctor/issues">open issues</a>, or read the maintainer's <a href="https://github.com/anchor-tools/stellar-anchor-doctor/blob/main/DRIPS_WAVE.md">Wave task backlog</a>. Check the live issue for scope, status, and current program rules before beginning work.</p>
+          <ol class="steps">
+            <li>Install Node.js 18 or newer and run <code>npm ci</code>.</li>
+            <li>Run <code>npm run typecheck</code>, <code>npm test</code>, and <code>npm run build</code>.</li>
+            <li>Add or update mock-based tests for behavior changes; unit tests must not make live network requests.</li>
+            <li>Open a focused pull request that links the issue and explains the change.</li>
+          </ol>
+          <div class="actions">
+            <a class="button" href="https://github.com/anchor-tools/stellar-anchor-doctor/issues">Find an issue</a>
+            <a class="button secondary" href="https://github.com/anchor-tools/stellar-anchor-doctor/blob/main/CONTRIBUTING.md">Read contributing guide</a>
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>Maintained by <a href="https://github.com/anchor-tools">Anchor Tools</a>. Licensed under Apache-2.0.</p>
+        <nav class="footer-links" aria-label="Footer links">
+          <a href="https://github.com/anchor-tools/stellar-anchor-doctor">Source</a>
+          <a href="https://github.com/anchor-tools/stellar-anchor-doctor/issues">Issues</a>
+          <a href="https://github.com/anchor-tools/stellar-anchor-doctor/blob/main/LICENSE">License</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

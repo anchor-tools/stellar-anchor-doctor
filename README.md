@@ -3,9 +3,13 @@
 [![CI](https://github.com/anchor-tools/stellar-anchor-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/anchor-tools/stellar-anchor-doctor/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 [![Stellar Ecosystem](https://img.shields.io/badge/Stellar-SEPs%20Auditor-08b5e5.svg)](https://stellar.org)
-[![Drips Wave](https://img.shields.io/badge/Drips%20Wave-Eligible-00c853.svg)](https://www.drips.network/wave)
+[![Drips Wave](https://img.shields.io/badge/Drips%20Wave-project%20tasks-00c853.svg)](./DRIPS_WAVE.md)
 
-Diagnostic scanner and health auditor for live Stellar Anchor deployments. Evaluates anchor configuration, CORS policies, cryptographic challenge integrity, and endpoint responsiveness across **SEP-1**, **SEP-10**, **SEP-24**, **SEP-38**, **SEP-6**, and **Transport Security**.
+Diagnostic scanner for live Stellar Anchor deployments. Checks anchor configuration, selected SEP endpoints, basic SEP-10 challenge structure, CORS policies, and HTTPS/HSTS across **SEP-1**, **SEP-10**, **SEP-24**, **SEP-38**, **SEP-6**, and **Transport Security**.
+
+[**Read the documentation site**](https://anchor-tools.github.io/stellar-anchor-doctor/) · [Contributing](./CONTRIBUTING.md) · [Wave task backlog](./DRIPS_WAVE.md)
+
+The documentation lives in [`docs/index.html`](./docs/index.html) and is published to GitHub Pages when changes reach `main`.
 
 ```console
 $ npx stellar-anchor-doctor testanchor.stellar.org
@@ -65,7 +69,7 @@ Building or integrating a Stellar Anchor involves coordinating multiple intercon
 - **Misconfigured `/info` schemas** in SEP-24, SEP-38, or SEP-6 that cause wallet apps to fail silent or abort transactions.
 - **Insecure endpoint URLs** mixing HTTP and HTTPS.
 
-While [`stellar-toml-lint`](https://github.com/anchor-tools/stellar-toml-lint) lints local `stellar.toml` files offline during CI, **`stellar-anchor-doctor`** audits the **live deployment environment**, validating that endpoints, cryptographic handshakes, and network policies function harmoniously in production or testnet.
+While [`stellar-toml-lint`](https://github.com/anchor-tools/stellar-toml-lint) lints local `stellar.toml` files offline during CI, **`stellar-anchor-doctor`** checks selected endpoints in a live deployment. It is a diagnostic aid—not a complete SEP conformance suite or a security audit.
 
 ---
 
@@ -121,7 +125,7 @@ stellar-anchor-doctor list-checks
 | `--skip <checks>` | `none` | Comma-separated check IDs to bypass (e.g. `sep-38,sep-6`) |
 | `--timeout <ms>` | `8000` | Network request timeout in milliseconds |
 | `--testnet` | `false` | Validate against Stellar Testnet network passphrase |
-| `-q, --quiet` | `false` | Only print summary statistics and failures |
+| `-q, --quiet` | `false` | For text output, show warnings, errors, and summary only |
 | `--no-color` | `false` | Disable ANSI terminal colors |
 | `-V, --version` | | Output version number |
 | `-h, --help` | | Display help manual |
@@ -140,10 +144,12 @@ stellar-anchor-doctor list-checks
 | :--- | :--- | :--- |
 | **`sep-1`** | Stellar Info File (`stellar.toml`) location, CORS wildcard, Content-Type, TOML syntax, network passphrase, Ed25519 public key CRC16 verification, and currency declarations | [SEP-0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) |
 | **`sep-10`** | `AUTH_SERVER` endpoint responsiveness, wildcard CORS, challenge XDR decoding, sequence number `0` check, timebounds grace period, manage data nonces, and server signature | [SEP-0010](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md) |
-| **`sep-24`** | `TRANSFER_SERVER_SEP0024` `/info` endpoint, CORS, deposit and withdrawal currency schema validation, and fee endpoint status | [SEP-0024](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md) |
-| **`sep-38`** | `ANCHOR_QUOTE_SERVER` `/info` endpoint, CORS, and supported quote assets schema (`stellar:...` and `iso4217:...`) | [SEP-0038](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0038.md) |
-| **`sep-6`** | `TRANSFER_SERVER` `/info` endpoint, CORS, and programmatic deposit/withdrawal mappings | [SEP-0006](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0006.md) |
-| **`security`** | HTTPS transport enforcement, HSTS (`Strict-Transport-Security`) headers, and audit of all declared service URLs | [Security Best Practices](https://developers.stellar.org/docs/anchoring-assets/) |
+| **`sep-24`** | `TRANSFER_SERVER_SEP0024` `/info` endpoint, CORS, deposit and withdrawal mapping presence, and fee configuration declaration | [SEP-0024](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md) |
+| **`sep-38`** | `ANCHOR_QUOTE_SERVER` `/info` endpoint, CORS, assets array presence, and basic quote-asset identifier format counts | [SEP-0038](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0038.md) |
+| **`sep-6`** | `TRANSFER_SERVER` `/info` endpoint, CORS, and reporting of configured deposit/withdrawal mappings | [SEP-0006](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0006.md) |
+| **`security`** | HTTPS URL schemes for selected declared endpoints and HSTS (`Strict-Transport-Security`) header presence | [Security Best Practices](https://developers.stellar.org/docs/anchoring-assets/) |
+
+These checks cover selected fields and response shapes, not every requirement in each SEP. In particular, SEP-10 currently checks for a Manage Data operation and at least one challenge signature but does **not** cryptographically verify the signer against `SIGNING_KEY` or validate every nonce and domain rule. A passing result is not a certification or guarantee of funds safety.
 
 ---
 
@@ -172,12 +178,13 @@ for (const finding of report.findings) {
 
 ---
 
-## Drips Wave Alignment
+## Drips Wave
 
-`stellar-anchor-doctor` is maintained by [Anchor Tools](https://github.com/anchor-tools) and actively participates in the **Drips Wave** program.
+`stellar-anchor-doctor` is maintained by [Anchor Tools](https://github.com/anchor-tools). The repository includes proposed, scoped contributor tasks for Drips Wave:
 
-- **Pre-scoped Tasks:** See [`DRIPS_WAVE.md`](./DRIPS_WAVE.md) for a curated backlog of scoped tasks with Acceptance Criteria ready for Wave sprint contributors.
-- **Contribution Guidelines:** See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+- **Documentation site:** [Read the project guide](https://anchor-tools.github.io/stellar-anchor-doctor/).
+- **Proposed tasks:** See [`DRIPS_WAVE.md`](./DRIPS_WAVE.md), then check live issues and current program rules before starting work.
+- **Contribution guide:** See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ---
 

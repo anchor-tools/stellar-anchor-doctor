@@ -21,7 +21,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .option('--skip <checks>', 'Comma-separated check IDs to skip (e.g. sep-38,sep-6)')
     .option('--timeout <ms>', 'Network request timeout in milliseconds', '8000')
     .option('--testnet', 'Audit against Stellar Testnet network passphrase', false)
-    .option('-q, --quiet', 'Only print summary diagnostics', false)
+    .option('-q, --quiet', 'Show only warning/error findings and summary in text output', false)
     .option('--no-color', 'Disable colored terminal output')
     .action(async (domain, options) => {
       if (!domain) {
@@ -50,7 +50,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
         } else if (options.format === 'markdown') {
           console.log(formatMarkdownReport(report));
         } else {
-          console.log(formatTextReport(report, options.color));
+          console.log(formatTextReport(report, options.color, options.quiet));
         }
 
         // Determine exit code

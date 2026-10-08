@@ -1,6 +1,6 @@
 # Contributing to stellar-anchor-doctor
 
-Thank you for your interest in contributing to `stellar-anchor-doctor`! This project is maintained under the **[Anchor Tools](https://github.com/anchor-tools)** organization and actively participates in the **Drips Wave** program.
+Thank you for your interest in contributing to `stellar-anchor-doctor`! This project is maintained under the **[Anchor Tools](https://github.com/anchor-tools)** organization. Proposed Wave tasks are collected in [`DRIPS_WAVE.md`](./DRIPS_WAVE.md); check the live issue and current program rules before beginning work.
 
 ## Getting Started
 
@@ -34,15 +34,9 @@ npm run build
 
 ## Drips Wave Contribution Guidelines
 
-If you are contributing as part of a **Drips Wave sprint**, please follow these rules to ensure your Pull Request is reviewed quickly and awarded points:
+If you are contributing as part of a **Drips Wave sprint**, follow the instructions in the relevant live issue and the current program rules. For a smooth review:
 
-1. **Claiming an Issue:**
-   - Check the [Issues](https://github.com/anchor-tools/stellar-anchor-doctor/issues) tab for tasks labeled `Stellar Wave`.
-   - Comment on the issue to express your interest before starting work.
-   - Each Wave issue has a pre-defined complexity tier:
-     - **Trivial (100 points):** Minor bug fixes, documentation, or small check additions.
-     - **Medium (150 points):** Adding a new check rule, reporter format, or test harness.
-     - **High (200 points):** New protocol suite (e.g. SEP-12/SEP-31), major architectural feature.
+1. **Coordinate first:** Check the [open issues](https://github.com/anchor-tools/stellar-anchor-doctor/issues) and follow the issue's contributor and assignment instructions before starting.
 
 2. **Acceptance Criteria:**
    - Every Wave issue contains a `- [ ]` checklist of verifiable acceptance criteria.
@@ -51,7 +45,7 @@ If you are contributing as part of a **Drips Wave sprint**, please follow these 
 3. **Writing Tests:**
    - Every new check or feature must include unit tests in `tests/`.
    - Never make live network calls in unit tests; use mock responses (see `tests/fixtures/mock-stellar-toml.ts`).
-   - Run `npm test` and ensure all tests pass before submitting your PR.
+   - Run `npm run typecheck`, `npm test`, and `npm run build` before submitting your PR.
 
 4. **Pull Request Format:**
    - Link the relevant issue: `Fixes #<issue-number>`.

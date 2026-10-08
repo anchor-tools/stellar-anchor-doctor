@@ -48,6 +48,37 @@ describe('Report Formatters', () => {
     expect(text).toContain('CORS Warning');
   });
 
+  it('quiet text output keeps warnings and the summary but hides passing findings', () => {
+    const reportWithError: AnchorReport = {
+      ...dummyReport,
+      score: 80,
+      grade: 'C',
+      findings: [
+        ...dummyReport.findings,
+        {
+          id: 'sep1-syntax',
+          category: 'SEP-0001',
+          severity: 'error',
+          title: 'Invalid TOML Syntax',
+          message: 'Could not parse stellar.toml',
+        },
+      ],
+      summary: { pass: 1, info: 0, warn: 1, error: 1, total: 3 },
+    };
+    const text = formatTextReport(reportWithError, false, true);
+
+    expect(text).not.toContain('stellar.toml Discovered');
+    expect(text).toContain('CORS Warning');
+    expect(text).toContain('Invalid TOML Syntax');
+    expect(text).toContain('Overall Health Score: 80/100');
+  });
+
+  it('disables ANSI color codes when requested', () => {
+    const text = formatTextReport(dummyReport, false);
+
+    expect(text).not.toMatch(/\u001b\[/);
+  });
+
   it('formats JSON report accurately', () => {
     const jsonStr = formatJsonReport(dummyReport);
     const parsed = JSON.parse(jsonStr);

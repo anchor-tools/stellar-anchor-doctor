@@ -1,26 +1,33 @@
 import pc from 'picocolors';
 import { AnchorReport, CheckCategory, DiagnosticFinding, Grade } from '../types.js';
 
-function formatGrade(grade: Grade): string {
+function formatGrade(grade: Grade, color: ReturnType<typeof pc.createColors>): string {
   switch (grade) {
     case 'A+':
     case 'A':
-      return pc.bold(pc.green(grade));
+      return color.bold(color.green(grade));
     case 'B':
-      return pc.bold(pc.cyan(grade));
+      return color.bold(color.cyan(grade));
     case 'C':
-      return pc.bold(pc.yellow(grade));
+      return color.bold(color.yellow(grade));
     default:
-      return pc.bold(pc.red(grade));
+      return color.bold(color.red(grade));
   }
 }
 
-export function formatTextReport(report: AnchorReport, useColor: boolean = true): string {
+export function formatTextReport(
+  report: AnchorReport,
+  useColor: boolean = true,
+  quiet: boolean = false
+): string {
   const lines: string[] = [];
+  const color = pc.createColors(useColor);
 
   lines.push('');
-  lines.push(pc.bold(`🩺 Stellar Anchor Doctor — Audit Report for ${pc.underline(report.domain)}`));
-  lines.push(pc.dim(`Timestamp: ${report.timestamp} | Duration: ${report.durationMs}ms`));
+  lines.push(
+    color.bold(`🩺 Stellar Anchor Doctor — Audit Report for ${color.underline(report.domain)}`)
+  );
+  lines.push(color.dim(`Timestamp: ${report.timestamp} | Duration: ${report.durationMs}ms`));
   lines.push('');
 
   // Group findings by category
@@ -38,7 +45,11 @@ export function formatTextReport(report: AnchorReport, useColor: boolean = true)
     grouped.set(cat, []);
   }
 
-  for (const finding of report.findings) {
+  const visibleFindings = quiet
+    ? report.findings.filter((finding) => finding.severity === 'warn' || finding.severity === 'error')
+    : report.findings;
+
+  for (const finding of visibleFindings) {
     const list = grouped.get(finding.category) || [];
     list.push(finding);
     grouped.set(finding.category, list);
@@ -47,7 +58,7 @@ export function formatTextReport(report: AnchorReport, useColor: boolean = true)
   for (const [category, findings] of grouped.entries()) {
     if (findings.length === 0) continue;
 
-    lines.push(pc.bold(pc.magenta(`[${category}]`)));
+    lines.push(color.bold(color.magenta(`[${category}]`)));
 
     for (const f of findings) {
       let icon = '';
@@ -55,48 +66,52 @@ export function formatTextReport(report: AnchorReport, useColor: boolean = true)
 
       switch (f.severity) {
         case 'pass':
-          icon = pc.green('✔');
-          title = pc.green(f.title);
+          icon = color.green('✔');
+          title = color.green(f.title);
           break;
         case 'info':
-          icon = pc.cyan('ℹ');
-          title = pc.cyan(f.title);
+          icon = color.cyan('ℹ');
+          title = color.cyan(f.title);
           break;
         case 'warn':
-          icon = pc.yellow('⚠');
-          title = pc.yellow(f.title);
+          icon = color.yellow('⚠');
+          title = color.yellow(f.title);
           break;
         case 'error':
-          icon = pc.red('✖');
-          title = pc.bold(pc.red(f.title));
+          icon = color.red('✖');
+          title = color.bold(color.red(f.title));
           break;
       }
 
       lines.push(`  ${icon} ${title}: ${f.message}`);
 
       if (f.remediation) {
-        lines.push(`    ${pc.dim('↳')} ${pc.dim('Remediation:')} ${pc.italic(f.remediation)}`);
+        lines.push(
+          `    ${color.dim('↳')} ${color.dim('Remediation:')} ${color.italic(f.remediation)}`
+        );
       }
       if (f.specUrl && f.severity === 'error') {
-        lines.push(`    ${pc.dim('↳')} ${pc.dim('Spec:')} ${pc.underline(pc.dim(f.specUrl))}`);
+        lines.push(
+          `    ${color.dim('↳')} ${color.dim('Spec:')} ${color.underline(color.dim(f.specUrl))}`
+        );
       }
     }
     lines.push('');
   }
 
   // Summary footer
-  lines.push(pc.bold('─'.repeat(64)));
+  lines.push(color.bold('─'.repeat(64)));
   lines.push(
-    `Overall Health Score: ${pc.bold(`${report.score}/100`)} [Grade: ${formatGrade(report.grade)}]`
+    `Overall Health Score: ${color.bold(`${report.score}/100`)} [Grade: ${formatGrade(report.grade, color)}]`
   );
   lines.push(
-    `Summary: ${pc.green(`${report.summary.pass} passed`)}, ` +
-      `${pc.red(`${report.summary.error} errors`)}, ` +
-      `${pc.yellow(`${report.summary.warn} warnings`)}, ` +
-      `${pc.cyan(`${report.summary.info} notices`)} ` +
-      pc.dim(`(${report.summary.total} total checks)`)
+    `Summary: ${color.green(`${report.summary.pass} passed`)}, ` +
+      `${color.red(`${report.summary.error} errors`)}, ` +
+      `${color.yellow(`${report.summary.warn} warnings`)}, ` +
+      `${color.cyan(`${report.summary.info} notices`)} ` +
+      color.dim(`(${report.summary.total} total checks)`)
   );
-  lines.push(pc.bold('─'.repeat(64)));
+  lines.push(color.bold('─'.repeat(64)));
 
   return lines.join('\n');
 }

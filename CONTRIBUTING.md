@@ -5,7 +5,7 @@ Thank you for your interest in contributing to `stellar-anchor-doctor`! This pro
 ## Getting Started
 
 ### Prerequisites
-- Node.js >= 18.0.0
+- Node.js >= 20.19.0 for development and tests
 - npm >= 9.0.0
 
 ### Setup

@@ -20,7 +20,7 @@ The estimates follow the [Drips complexity guidance](https://www.drips.network/b
 
 - Read the full problem, scope, implementation guidance, and acceptance checklist in the live issue before starting.
 - Check the issue is still open and follow any assignment or coordination instructions there.
-- Install Node.js 18 or newer, then run `npm ci`, `npm run typecheck`, `npm test`, and `npm run build`.
+- Install Node.js 20.19 or newer, then run `npm ci`, `npm run typecheck`, `npm test`, and `npm run build`.
 - Use mocked HTTP responses in tests; do not make live network calls from unit tests.
 - Open a pull request that links the issue and explains the change, tests, and any relevant CLI output.
 

@@ -75,7 +75,7 @@ While [`stellar-toml-lint`](https://github.com/anchor-tools/stellar-toml-lint) l
 
 ## Installation
 
-The npm package is not published yet. To use the CLI, build it from a source checkout:
+Requires Node.js 20 or newer; use Node.js 20.19 or newer for the repository's development and test toolchain. The npm package is not published yet. To use the CLI, build it from a source checkout:
 
 ```bash
 git clone https://github.com/anchor-tools/stellar-anchor-doctor.git

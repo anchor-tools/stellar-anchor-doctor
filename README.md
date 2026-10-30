@@ -136,6 +136,49 @@ node ./bin/stellar-anchor-doctor.js list-checks
 - **`1`**: Diagnostic errors detected (or warnings present with `--strict`).
 - **`2`**: Command-line usage error or invalid arguments.
 
+### GitHub Actions
+
+You can run `stellar-anchor-doctor` in GitHub Actions to audit a live anchor deployment on demand or on a schedule:
+
+```yaml
+name: Audit Anchor Deployment
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout stellar-anchor-doctor
+        uses: actions/checkout@v4
+        with:
+          repository: anchor-tools/stellar-anchor-doctor
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CLI
+        run: npm run build
+
+      - name: Run anchor audit
+        env:
+          ANCHOR_DOMAIN: ${{ vars.ANCHOR_DOMAIN }}
+        run: node ./bin/stellar-anchor-doctor.js "$ANCHOR_DOMAIN" --strict
+```
+
+- **Domain configuration:** Define an `ANCHOR_DOMAIN` [repository variable](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables) (for example, `anchor.example.com`) under **Settings → Secrets and variables → Actions → Variables**, and pass it to the CLI via `${{ vars.ANCHOR_DOMAIN }}`. Add `--testnet` if the target anchor operates on Stellar Testnet.
+- **Failure behavior (`--strict`):** By default, the CLI exits with code `1` only when diagnostic errors (`error`) are found, allowing warnings (`warn`) to pass with exit code `0`. Passing `--strict` treats warnings as errors and causes the workflow step to fail with exit code `1` on any warning or error.
+- **Live network requests:** This workflow performs live HTTPS requests against the configured domain's `/.well-known/stellar.toml` and discovered SEP endpoints (including SEP-10 challenge generation). Only run it against anchor deployments you own or are explicitly authorized to test.
+
 ---
 
 ## Supported Diagnostic Suites

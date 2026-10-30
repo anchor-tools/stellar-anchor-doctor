@@ -7,7 +7,7 @@
 
 Diagnostic scanner for live Stellar Anchor deployments. Checks anchor configuration, selected SEP endpoints, basic SEP-10 challenge structure, CORS policies, and HTTPS/HSTS across **SEP-1**, **SEP-10**, **SEP-24**, **SEP-38**, **SEP-6**, and **Transport Security**.
 
-[**Read the documentation site**](https://stellar-anchor-doctor-docs.vercel.app/) · [Contributing](./CONTRIBUTING.md) · [Wave task backlog](./DRIPS_WAVE.md)
+[**Read the documentation site**](https://stellar-anchor-doctor-docs.vercel.app/) · [Contributing](./CONTRIBUTING.md) · [Security](./SECURITY.md) · [Wave task backlog](./DRIPS_WAVE.md)
 
 The documentation lives in [`docs/index.html`](./docs/index.html) and is published at [stellar-anchor-doctor-docs.vercel.app](https://stellar-anchor-doctor-docs.vercel.app/). Changes to `main` are also published to [GitHub Pages](https://anchor-tools.github.io/stellar-anchor-doctor/).
 

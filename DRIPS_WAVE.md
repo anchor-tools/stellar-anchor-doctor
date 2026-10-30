@@ -1,6 +1,6 @@
 # Drips Wave Contributor Guide
 
-This repository has seven open issues proposed for Drips Wave. They are project-maintained tasks, not confirmation that the repository or issues have been accepted into a Wave. Check the [current Drips Wave rules](https://docs.drips.network/wave/) and follow the organizers' application and issue-tagging process.
+This repository has eight open issues proposed for Drips Wave. They are project-maintained tasks, not confirmation that the repository or issues have been accepted into a Wave. Check the [current Drips Wave rules](https://docs.drips.network/wave/) and follow the organizers' application and issue-tagging process.
 
 ## Open tasks
 
@@ -13,6 +13,7 @@ This repository has seven open issues proposed for Drips Wave. They are project-
 | [#5](https://github.com/anchor-tools/stellar-anchor-doctor/issues/5) | Retry transient network failures with exponential backoff | Medium — 150 points |
 | [#6](https://github.com/anchor-tools/stellar-anchor-doctor/issues/6) | Add standalone HTML audit report output | Medium — 150 points |
 | [#7](https://github.com/anchor-tools/stellar-anchor-doctor/issues/7) | Audit SEP-10 client domain challenge handling | Medium — 150 points |
+| [#8](https://github.com/anchor-tools/stellar-anchor-doctor/issues/8) | Document a GitHub Actions audit example | Trivial — 100 points |
 
 The estimates follow the [Drips complexity guidance](https://www.drips.network/blog/posts/creating-meaningful-issues): Trivial is 100 points, Medium is 150 points, and High is 200 points. The labels on each live issue identify its current estimate; the Wave organizers' rules take precedence.
 

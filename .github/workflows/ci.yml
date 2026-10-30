@@ -35,3 +35,14 @@ jobs:
 
       - name: Build binary / package
         run: npm run build
+
+      - name: CLI smoke test
+        run: |
+          node ./bin/stellar-anchor-doctor.js --version
+          checks="$(node ./bin/stellar-anchor-doctor.js list-checks)"
+          for check in sep-1 sep-10 sep-24 sep-38 sep-6 security; do
+            if ! echo "$checks" | grep -Eq "^[[:space:]]*${check}[[:space:]]"; then
+              echo "::error::Missing diagnostic check: $check"
+              exit 1
+            fi
+          done

@@ -397,6 +397,7 @@ for (const finding of report.findings) {
           <ul class="steps">
             <li>SEP checks validate selected fields and response shapes only; they do not exercise complete user flows.</li>
             <li>SEP-10 currently checks that a challenge includes a Manage Data operation and at least one signature; it does <strong>not</strong> cryptographically verify the signer against <code>SIGNING_KEY</code> or validate every nonce and domain rule.</li>
+            <li>SEP-10 client-domain support is checked structurally only: the challenge requested with <code>client_domain</code> must contain a matching Manage Data operation with its own source account. The probe domain publishes no <code>SIGNING_KEY</code>, no client-domain signature is added or verified, and no challenge is submitted, so end-to-end client-domain attribution is not confirmed. Servers may legitimately ignore the parameter, which is reported as a warning.</li>
             <li>Some checks are intentionally shallow. A reported pass does not imply that every requirement in the linked SEP has been met.</li>
             <li>The tool performs network requests to endpoints named by the target's public metadata. Use only on systems you are authorized to audit.</li>
           </ul>

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { TEST_CLIENT_DOMAIN } from '../src/checks/sep10.js';
 import { calculateGrade, calculateScore, DoctorEngine } from '../src/engine.js';
 import {
   generateMockSep10Challenge,
@@ -41,9 +42,13 @@ describe('Doctor Engine & Scoring', () => {
       }
 
       if (url.includes('/auth')) {
+        const transaction = url.includes('client_domain=')
+          ? generateMockSep10Challenge({ clientDomain: TEST_CLIENT_DOMAIN })
+          : challengeXdr;
+
         return new Response(
           JSON.stringify({
-            transaction: challengeXdr,
+            transaction,
           }),
           {
             status: 200,

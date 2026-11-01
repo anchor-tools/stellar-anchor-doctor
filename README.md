@@ -186,13 +186,15 @@ jobs:
 | Check Suite | Description | Spec Reference |
 | :--- | :--- | :--- |
 | **`sep-1`** | Stellar Info File (`stellar.toml`) location, CORS wildcard, Content-Type, TOML syntax, network passphrase, Ed25519 public key CRC16 verification, and currency declarations | [SEP-0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) |
-| **`sep-10`** | `AUTH_SERVER` endpoint responsiveness, wildcard CORS, challenge XDR decoding, sequence number `0` check, timebounds grace period, manage data nonces, and server signature | [SEP-0010](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md) |
+| **`sep-10`** | `AUTH_SERVER` endpoint responsiveness, wildcard CORS, challenge XDR decoding, sequence number `0` check, timebounds grace period, manage data nonces, server signature, and structural `client_domain` challenge checks | [SEP-0010](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md) |
 | **`sep-24`** | `TRANSFER_SERVER_SEP0024` `/info` endpoint, CORS, deposit and withdrawal mapping presence, and fee configuration declaration | [SEP-0024](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md) |
 | **`sep-38`** | `ANCHOR_QUOTE_SERVER` `/info` endpoint, CORS, assets array presence, and basic quote-asset identifier format counts | [SEP-0038](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0038.md) |
 | **`sep-6`** | `TRANSFER_SERVER` `/info` endpoint, CORS, and reporting of configured deposit/withdrawal mappings | [SEP-0006](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0006.md) |
 | **`security`** | HTTPS URL schemes for selected declared endpoints and HSTS (`Strict-Transport-Security`) header presence | [Security Best Practices](https://developers.stellar.org/docs/anchoring-assets/) |
 
 These checks cover selected fields and response shapes, not every requirement in each SEP. In particular, SEP-10 currently checks for a Manage Data operation and at least one challenge signature but does **not** cryptographically verify the signer against `SIGNING_KEY` or validate every nonce and domain rule. A passing result is not a certification or guarantee of funds safety.
+
+The SEP-10 client-domain probe requests a challenge with `client_domain=anchor-doctor.example` (a reserved `.example` domain) and inspects the returned transaction only. It verifies that the challenge includes a `client_domain` Manage Data operation whose value matches the request and whose source account is not inherited from the server, and it flags a `client_domain` operation that appears when the parameter was not requested. It does **not** fetch the probe domain's `stellar.toml` `SIGNING_KEY`, cannot add or verify a client-domain signature (no signing key is available), and never submits the challenge to the token endpoint, so it cannot confirm that client-domain attribution works end to end. SEP-10 also permits servers to ignore `client_domain` when they do not support client-domain verification, so a missing operation is reported as a warning rather than an error. Because the probe domain is unresolvable, a spec-compliant `400 Bad Request` ("unable to fetch the client domain's `SIGNING_KEY`") is reported as an informational notice, while other probe failures are reported as warnings.
 
 ---
 

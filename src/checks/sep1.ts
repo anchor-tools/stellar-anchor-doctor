@@ -224,6 +224,17 @@ export const sep1Check: DiagnosticCheck = {
       context.endpoints.kycServerUrl = parsed.KYC_SERVER;
     }
 
+    if (parsed.DIRECT_PAYMENT_SERVER) {
+      context.endpoints.directPaymentServerUrl = parsed.DIRECT_PAYMENT_SERVER;
+      findings.push({
+        id: 'sep1-endpoint-sep31',
+        category: 'SEP-0001',
+        severity: 'info',
+        title: 'Discovered DIRECT_PAYMENT_SERVER (SEP-31)',
+        message: `SEP-31 Direct Payment Server: ${parsed.DIRECT_PAYMENT_SERVER}`,
+      });
+    }
+
     // Check CURRENCIES array
     if (Array.isArray(parsed.CURRENCIES) && parsed.CURRENCIES.length > 0) {
       for (const [idx, cur] of parsed.CURRENCIES.entries()) {

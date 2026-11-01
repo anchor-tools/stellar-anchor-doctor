@@ -4,6 +4,7 @@ export type CheckCategory =
   | 'SEP-0001'
   | 'SEP-0010'
   | 'SEP-0024'
+  | 'SEP-0031'
   | 'SEP-0038'
   | 'SEP-0006'
   | 'SECURITY'

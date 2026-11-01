@@ -8,6 +8,7 @@ AUTH_SERVER = "https://anchor.example.com/auth"
 TRANSFER_SERVER_SEP0024 = "https://anchor.example.com/sep24"
 TRANSFER_SERVER = "https://anchor.example.com/sep6"
 ANCHOR_QUOTE_SERVER = "https://anchor.example.com/sep38"
+DIRECT_PAYMENT_SERVER = "https://anchor.example.com/sep31"
 
 [DOCUMENTATION]
 ORG_NAME = "Example Anchor Inc."
@@ -122,5 +123,50 @@ export const VALID_SEP6_INFO = {
       min_amount: 5,
       max_amount: 5000,
     },
+  },
+};
+
+export const VALID_SEP31_INFO = {
+  deposit: {
+    USDC: {
+      enabled: true,
+      min_amount: 1,
+      max_amount: 10000,
+      fee_fixed: 0.5,
+      fee_percent: 0.1,
+    },
+    EUR: {
+      enabled: true,
+      min_amount: 5,
+      max_amount: 5000,
+      fee_fixed: 1.0,
+      fee_percent: 0.2,
+    },
+  },
+  withdraw: {
+    USDC: {
+      enabled: true,
+      min_amount: 5,
+      max_amount: 5000,
+      fee_fixed: 1.0,
+      fee_percent: 0.2,
+    },
+  },
+  fields: [
+    {
+      name: 'origin_country_code',
+      description: 'ISO 3166-1 alpha-2 country code of the payment origin.',
+      type: 'string',
+      required: true,
+    },
+    {
+      name: 'destination_country_code',
+      description: 'ISO 3166-1 alpha-2 country code of the payment destination.',
+      type: 'string',
+      required: true,
+    },
+  ],
+  fee: {
+    enabled: true,
   },
 };

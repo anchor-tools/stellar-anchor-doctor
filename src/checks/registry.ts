@@ -2,6 +2,7 @@ import { DiagnosticCheck } from '../types.js';
 import { sep1Check } from './sep1.js';
 import { sep10Check } from './sep10.js';
 import { sep24Check } from './sep24.js';
+import { sep31Check } from './sep31.js';
 import { sep38Check } from './sep38.js';
 import { sep6Check } from './sep6.js';
 import { securityCheck } from './security.js';
@@ -13,6 +14,7 @@ export class CheckRegistry {
     this.register(sep1Check);
     this.register(sep10Check);
     this.register(sep24Check);
+    this.register(sep31Check);
     this.register(sep38Check);
     this.register(sep6Check);
     this.register(securityCheck);

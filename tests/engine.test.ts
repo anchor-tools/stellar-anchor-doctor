@@ -4,6 +4,7 @@ import { calculateGrade, calculateScore, DoctorEngine } from '../src/engine.js';
 import {
   generateMockSep10Challenge,
   VALID_SEP24_INFO,
+  VALID_SEP31_INFO,
   VALID_SEP38_INFO,
   VALID_SEP6_INFO,
   VALID_STELLAR_TOML,
@@ -82,6 +83,16 @@ describe('Doctor Engine & Scoring', () => {
 
       if (url.includes('/sep6/info')) {
         return new Response(JSON.stringify(VALID_SEP6_INFO), {
+          status: 200,
+          headers: {
+            'access-control-allow-origin': '*',
+            'content-type': 'application/json',
+          },
+        });
+      }
+
+      if (url.includes('/sep31/info')) {
+        return new Response(JSON.stringify(VALID_SEP31_INFO), {
           status: 200,
           headers: {
             'access-control-allow-origin': '*',

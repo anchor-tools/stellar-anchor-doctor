@@ -5,7 +5,7 @@
 [![Stellar Ecosystem](https://img.shields.io/badge/Stellar-SEPs%20Auditor-08b5e5.svg)](https://stellar.org)
 [![Drips Wave](https://img.shields.io/badge/Drips%20Wave-project%20tasks-00c853.svg)](./DRIPS_WAVE.md)
 
-Diagnostic scanner for live Stellar Anchor deployments. Checks anchor configuration, selected SEP endpoints, basic SEP-10 challenge structure, CORS policies, and HTTPS/HSTS across **SEP-1**, **SEP-10**, **SEP-24**, **SEP-38**, **SEP-6**, and **Transport Security**.
+Diagnostic scanner for live Stellar Anchor deployments. Checks anchor configuration, selected SEP endpoints, basic SEP-10 challenge structure, CORS policies, and HTTPS/HSTS across **SEP-1**, **SEP-10**, **SEP-24**, **SEP-31**, **SEP-38**, **SEP-6**, and **Transport Security**.
 
 [**Read the documentation site**](https://stellar-anchor-doctor-docs.vercel.app/) · [Contributing](./CONTRIBUTING.md) · [Security](./SECURITY.md) · [Wave task backlog](./DRIPS_WAVE.md)
 
@@ -27,6 +27,7 @@ Timestamp: 2026-10-08T05:30:00.000Z | Duration: 642ms
   ℹ Discovered AUTH_SERVER: SEP-10 Auth Server: https://testanchor.stellar.org/auth
   ℹ Discovered TRANSFER_SERVER_SEP0024: SEP-24 Server: https://testanchor.stellar.org/sep24
   ℹ Discovered ANCHOR_QUOTE_SERVER (SEP-38): SEP-38 Server: https://testanchor.stellar.org/sep38
+  ℹ Discovered DIRECT_PAYMENT_SERVER (SEP-31): SEP-31 Direct Payment Server: https://testanchor.stellar.org/sep31
 
 [SEP-0010]
   ✔ AUTH_SERVER Responding: Successfully received response from /auth (210ms)
@@ -43,6 +44,14 @@ Timestamp: 2026-10-08T05:30:00.000Z | Duration: 642ms
   ✔ Deposit Assets Configured: Found 1 deposit asset(s): USDC
   ✔ Withdrawal Assets Configured: Found 1 withdrawal asset(s): USDC
 
+[SEP-0031]
+  ✔ SEP-31 /info Endpoint Accessible: Successfully connected to /sep31/info (120ms)
+  ✔ SEP-31 CORS Allowed: Access-Control-Allow-Origin is set to *
+  ✔ SEP-31 Deposit Assets Configured: Found 2 deposit asset(s): USDC, EUR
+  ✔ SEP-31 Withdrawal Assets Configured: Found 1 withdrawal asset(s): USDC
+  ✔ SEP-31 Transaction Fields Declared: Declared 2 transaction field(s) for cross-border payment instructions.
+  ✔ SEP-31 Fee Configuration Declared: Fee configuration is present in /info response.
+
 [SEP-0038]
   ✔ SEP-38 /info Endpoint Accessible: Successfully connected to /sep38/info (167ms)
   ✔ SEP-38 CORS Allowed: Access-Control-Allow-Origin is set to *
@@ -55,7 +64,7 @@ Timestamp: 2026-10-08T05:30:00.000Z | Duration: 642ms
 
 ────────────────────────────────────────────────────────────────
 Overall Health Score: 100/100 [Grade: A+]
-Summary: 18 passed, 0 errors, 0 warnings, 3 notices (21 total checks)
+Summary: 24 passed, 0 errors, 0 warnings, 4 notices (28 total checks)
 ────────────────────────────────────────────────────────────────
 ```
 
@@ -188,6 +197,7 @@ jobs:
 | **`sep-1`** | Stellar Info File (`stellar.toml`) location, CORS wildcard, Content-Type, TOML syntax, network passphrase, Ed25519 public key CRC16 verification, and currency declarations | [SEP-0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) |
 | **`sep-10`** | `AUTH_SERVER` endpoint responsiveness, wildcard CORS, challenge XDR decoding, sequence number `0` check, timebounds grace period, manage data nonces, server signature, and structural `client_domain` challenge checks | [SEP-0010](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md) |
 | **`sep-24`** | `TRANSFER_SERVER_SEP0024` `/info` endpoint, CORS, deposit and withdrawal mapping presence, and fee configuration declaration | [SEP-0024](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md) |
+| **`sep-31`** | `DIRECT_PAYMENT_SERVER` `/info` endpoint, wildcard CORS, deposit/withdrawal asset maps, transaction `fields` declaration, and optional fee configuration for cross-border payments | [SEP-0031](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0031.md) |
 | **`sep-38`** | `ANCHOR_QUOTE_SERVER` `/info` endpoint, CORS, assets array presence, and basic quote-asset identifier format counts | [SEP-0038](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0038.md) |
 | **`sep-6`** | `TRANSFER_SERVER` `/info` endpoint, CORS, and reporting of configured deposit/withdrawal mappings | [SEP-0006](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0006.md) |
 | **`security`** | HTTPS URL schemes for selected declared endpoints and HSTS (`Strict-Transport-Security`) header presence | [Security Best Practices](https://developers.stellar.org/docs/anchoring-assets/) |

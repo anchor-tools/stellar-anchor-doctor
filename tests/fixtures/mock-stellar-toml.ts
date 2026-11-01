@@ -20,30 +20,55 @@ issuer = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"
 is_unlimited = true
 `;
 
-export function generateMockSep10Challenge(): string {
+export interface MockSep10ChallengeOptions {
+  /** When set, appends the optional `client_domain` Manage Data operation. */
+  clientDomain?: string;
+  /** Overrides the `client_domain` operation value (defaults to `clientDomain`). */
+  clientDomainValue?: string;
+  /** Overrides the `client_domain` operation source (defaults to a random domain key). */
+  clientDomainSource?: string;
+  /** Emits the `client_domain` operation without a source account. */
+  clientDomainWithoutSource?: boolean;
+}
+
+export function generateMockSep10Challenge(
+  options: MockSep10ChallengeOptions = {}
+): string {
   const serverKeypair = Keypair.random();
   const clientKeypair = Keypair.random();
+  const clientDomainKeypair = Keypair.random();
 
   const account = new Account(serverKeypair.publicKey(), '-1');
 
   const now = Math.floor(Date.now() / 1000);
-  const tx = new TransactionBuilder(account as any, {
+  let builder = new TransactionBuilder(account as any, {
     fee: '100',
     networkPassphrase: Networks.PUBLIC,
     timebounds: {
       minTime: now,
       maxTime: now + 300,
     },
-  })
-    .addOperation(
-      Operation.manageData({
-        name: 'example.com auth',
-        value: Buffer.alloc(48, 1),
-        source: clientKeypair.publicKey(),
-      })
-    )
-    .build();
+  }).addOperation(
+    Operation.manageData({
+      name: 'example.com auth',
+      value: Buffer.alloc(48, 1),
+      source: clientKeypair.publicKey(),
+    })
+  );
 
+  if (options.clientDomain) {
+    builder = builder.addOperation(
+      Operation.manageData({
+        name: 'client_domain',
+        value: options.clientDomainValue ?? options.clientDomain,
+        ...(options.clientDomainWithoutSource
+          ? {}
+          : { source: options.clientDomainSource ?? clientDomainKeypair.publicKey() }),
+      })
+    );
+  }
+
+  const tx = builder.build();
   tx.sign(serverKeypair);
   return tx.toEnvelope().toXDR('base64');
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { formatHtmlReport, escapeHtml } from '../src/reporters/html.js';
 import { formatJsonReport } from '../src/reporters/json.js';
 import { formatMarkdownReport } from '../src/reporters/markdown.js';
+import { formatSarifReport, mapSeverityToSarifLevel } from '../src/reporters/sarif.js';
 import { formatTextReport } from '../src/reporters/text.js';
 import { AnchorReport } from '../src/types.js';
 
@@ -192,6 +193,95 @@ describe('Report Formatters', () => {
     expect(html).toContain('&lt;script&gt;alert');
     expect(html).toContain('&lt;img src=x');
     expect(html).toContain('&amp; &lt; &gt; &quot; &#39; payload');
+  });
+
+  it('formats a valid SARIF 2.1.0 document with required fields', () => {
+    const sarif = JSON.parse(formatSarifReport(dummyReport));
+
+    expect(sarif.version).toBe('2.1.0');
+    expect(sarif.$schema).toContain('sarif-2.1.0');
+    expect(sarif.runs).toHaveLength(1);
+
+    const run = sarif.runs[0];
+    expect(run.tool.driver.name).toBe('stellar-anchor-doctor');
+    expect(run.tool.driver.informationUri).toContain('github.com/anchor-tools/stellar-anchor-doctor');
+    expect(Array.isArray(run.tool.driver.rules)).toBe(true);
+    expect(Array.isArray(run.results)).toBe(true);
+  });
+
+  it('maps severities to SARIF levels and omits passing checks', () => {
+    expect(mapSeverityToSarifLevel('error')).toBe('error');
+    expect(mapSeverityToSarifLevel('warn')).toBe('warning');
+    expect(mapSeverityToSarifLevel('info')).toBe('note');
+    expect(mapSeverityToSarifLevel('pass')).toBeUndefined();
+
+    const report: AnchorReport = {
+      ...dummyReport,
+      findings: [
+        {
+          id: 'sep1-pass',
+          category: 'SEP-0001',
+          severity: 'pass',
+          title: 'Passing Check',
+          message: 'Everything is fine.',
+        },
+        {
+          id: 'sep1-error',
+          category: 'SEP-0001',
+          severity: 'error',
+          title: 'Broken Endpoint',
+          message: 'The endpoint failed.',
+          remediation: 'Fix the endpoint.',
+          specUrl: 'https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md',
+        },
+        {
+          id: 'sep24-warn',
+          category: 'SEP-0024',
+          severity: 'warn',
+          title: 'Deprecated Field',
+          message: 'A deprecated field is present.',
+        },
+        {
+          id: 'sep10-info',
+          category: 'SEP-0010',
+          severity: 'info',
+          title: 'Testnet Notice',
+          message: 'This anchor targets Testnet.',
+        },
+      ],
+      summary: { pass: 1, info: 1, warn: 1, error: 1, total: 4 },
+    };
+    const sarif = JSON.parse(formatSarifReport(report));
+    const run = sarif.runs[0];
+
+    expect(run.results).toHaveLength(3);
+    expect(run.results.map((r: { level: string }) => r.level)).toEqual([
+      'error',
+      'warning',
+      'note',
+    ]);
+    expect(run.results.some((r: { ruleId: string }) => r.ruleId === 'sep1-pass')).toBe(false);
+    expect(run.tool.driver.rules.map((r: { id: string }) => r.id)).toEqual([
+      'sep1-error',
+      'sep24-warn',
+      'sep10-info',
+    ]);
+
+    const errorRule = run.tool.driver.rules[0];
+    expect(errorRule.defaultConfiguration.level).toBe('error');
+    expect(errorRule.shortDescription.text).toBe('Broken Endpoint');
+    expect(errorRule.fullDescription.text).toBe('The endpoint failed.');
+    expect(errorRule.help.text).toBe('Fix the endpoint.');
+    expect(errorRule.helpUri).toContain('sep-0001.md');
+    expect(errorRule.properties.category).toBe('SEP-0001');
+
+    const errorResult = run.results[0];
+    expect(errorResult.ruleId).toBe('sep1-error');
+    expect(errorResult.ruleIndex).toBe(0);
+    expect(errorResult.message.text).toContain('Broken Endpoint');
+    expect(errorResult.locations[0].physicalLocation.artifactLocation.uri).toBe(
+      dummyReport.endpoints.stellarTomlUrl
+    );
   });
 
   it('produces a self-contained document without external resources', () => {

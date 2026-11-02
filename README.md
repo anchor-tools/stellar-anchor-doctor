@@ -111,6 +111,9 @@ node ./bin/stellar-anchor-doctor.js anchor.example.com --format json
 # Output report as Markdown (for GitHub Issue/PR comments)
 node ./bin/stellar-anchor-doctor.js anchor.example.com --format markdown
 
+# Output a standalone HTML report (for sharing with stakeholders)
+node ./bin/stellar-anchor-doctor.js anchor.example.com --format html > report.html
+
 # Treat warnings as errors (fail with exit code 1)
 node ./bin/stellar-anchor-doctor.js anchor.example.com --strict
 
@@ -129,7 +132,7 @@ node ./bin/stellar-anchor-doctor.js list-checks
 | Flag | Default | Description |
 | :--- | :--- | :--- |
 | `[domain]` | *required* | Apex domain or hostname of the anchor to audit |
-| `-f, --format <fmt>` | `text` | Output reporter format: `text`, `json`, or `markdown` |
+| `-f, --format <fmt>` | `text` | Output reporter format: `text`, `json`, `markdown`, or `html` |
 | `--strict` | `false` | Treat warnings as errors and exit with code `1` |
 | `--skip <checks>` | `none` | Comma-separated check IDs to bypass (e.g. `sep-38,sep-6`) |
 | `--timeout <ms>` | `8000` | Network request timeout in milliseconds |

@@ -291,7 +291,10 @@ node ./bin/stellar-anchor-doctor.js anchor.example.com
 node ./bin/stellar-anchor-doctor.js testanchor.stellar.org --testnet
 
 # Save machine-readable output
-node ./bin/stellar-anchor-doctor.js anchor.example.com --format json</code></pre>
+node ./bin/stellar-anchor-doctor.js anchor.example.com --format json
+
+# Save a standalone HTML report for sharing
+node ./bin/stellar-anchor-doctor.js anchor.example.com --format html > report.html</code></pre>
           <div class="callout notice">
             <p><strong>Before running:</strong> only audit services you own or have permission to test. The tool contacts the target's published URLs, including an SEP-10 challenge request when an auth server is declared.</p>
           </div>
@@ -343,7 +346,7 @@ node ./bin/stellar-anchor-doctor.js anchor.example.com --format json</code></pre
         <section id="reports">
           <div class="eyebrow">Understand results</div>
           <h2>Report formats and score</h2>
-          <p>Choose <code>text</code> for people, <code>json</code> for scripts, or <code>markdown</code> for an issue or pull request. The command exits with code <code>1</code> when errors are found; <code>--strict</code> also makes warnings fail. Invalid command usage exits with code <code>2</code>.</p>
+          <p>Choose <code>text</code> for people, <code>json</code> for scripts, <code>markdown</code> for an issue or pull request, or <code>html</code> for a self-contained shareable report. The command exits with code <code>1</code> when errors are found; <code>--strict</code> also makes warnings fail. Invalid command usage exits with code <code>2</code>.</p>
           <p>The score starts at 100, subtracts 15 for each error and 5 for each warning, and is bounded between 0 and 100. Informational findings and passing checks do not change the score. Grades are a project-defined summary, not an external certification.</p>
           <div class="callout warning">
             <p><strong>Interpret the score carefully.</strong> It summarizes the findings this tool currently emits; it is not a measure of funds safety, regulatory compliance, service quality, or complete SEP conformance.</p>
@@ -355,7 +358,7 @@ node ./bin/stellar-anchor-doctor.js anchor.example.com --format json</code></pre
           <h2>CLI options</h2>
           <div class="option-list" aria-label="Command-line options">
             <div class="option"><code>&lt;domain&gt;</code></div><div class="description">Anchor hostname to audit.</div>
-            <div class="option"><code>-f, --format &lt;format&gt;</code></div><div class="description"><code>text</code> (default), <code>json</code>, or <code>markdown</code>.</div>
+            <div class="option"><code>-f, --format &lt;format&gt;</code></div><div class="description"><code>text</code> (default), <code>json</code>, <code>markdown</code>, or <code>html</code>.</div>
             <div class="option"><code>--strict</code></div><div class="description">Exit with code 1 for warnings as well as errors.</div>
             <div class="option"><code>--skip &lt;checks&gt;</code></div><div class="description">Comma-separated suite IDs to skip, such as <code>sep-38,sep-6</code>.</div>
             <div class="option"><code>--timeout &lt;ms&gt;</code></div><div class="description">Network request timeout in milliseconds (default: 8000).</div>

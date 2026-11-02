@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import pc from 'picocolors';
 import { defaultRegistry } from './checks/registry.js';
 import { DoctorEngine } from './engine.js';
+import { formatHtmlReport } from './reporters/html.js';
 import { formatJsonReport } from './reporters/json.js';
 import { formatMarkdownReport } from './reporters/markdown.js';
 import { formatTextReport } from './reporters/text.js';
@@ -16,7 +17,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
 
   program
     .argument('[domain]', 'Anchor domain to audit (e.g. anchor.example.com)')
-    .option('-f, --format <format>', 'Output format: text, json, or markdown', 'text')
+    .option('-f, --format <format>', 'Output format: text, json, markdown, or html', 'text')
     .option('--strict', 'Treat warnings as errors and exit with code 1', false)
     .option('--skip <checks>', 'Comma-separated check IDs to skip (e.g. sep-38,sep-6)')
     .option('--timeout <ms>', 'Network request timeout in milliseconds', '8000')
@@ -49,6 +50,8 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
           console.log(formatJsonReport(report));
         } else if (options.format === 'markdown') {
           console.log(formatMarkdownReport(report));
+        } else if (options.format === 'html') {
+          console.log(formatHtmlReport(report));
         } else {
           console.log(formatTextReport(report, options.color, options.quiet));
         }

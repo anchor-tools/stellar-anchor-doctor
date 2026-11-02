@@ -75,7 +75,7 @@ export interface AnchorReport {
 
 export interface DoctorOptions {
   domain: string;
-  format?: 'text' | 'json' | 'markdown';
+  format?: 'text' | 'json' | 'markdown' | 'html';
   strict?: boolean;
   skip?: string[];
   timeout?: number;

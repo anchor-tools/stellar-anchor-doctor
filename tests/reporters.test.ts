@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { formatHtmlReport, escapeHtml } from '../src/reporters/html.js';
 import { formatJsonReport } from '../src/reporters/json.js';
 import { formatMarkdownReport } from '../src/reporters/markdown.js';
 import { formatTextReport } from '../src/reporters/text.js';
@@ -93,5 +94,116 @@ describe('Report Formatters', () => {
     expect(md).toContain('Health Score: **95/100**');
     expect(md).toContain('| ✅ Passed | 1 |');
     expect(md).toContain('### [SEP-0001] ⚠️ WARN: CORS Warning');
+  });
+
+  it('formats a standalone HTML document with report content', () => {
+    const html = formatHtmlReport(dummyReport);
+    expect(html).toMatch(/^<!doctype html>/);
+    expect(html).toContain('<html lang="en">');
+    expect(html).toContain('Stellar Anchor Doctor');
+    expect(html).toContain('test-anchor.org');
+    expect(html).toContain('>95<');
+    expect(html).toContain('Grade A+');
+    expect(html).toContain('stellar.toml Discovered');
+    expect(html).toContain('CORS Warning');
+    expect(html).toContain('Missing header');
+    expect(html).toContain('Remediation:</span> Add header');
+    expect(html).toContain('https://test-anchor.org/.well-known/stellar.toml');
+    expect(html).toContain('SEP-0001');
+  });
+
+  it('distinguishes pass, warning, and error states accessibly without color alone', () => {
+    const html = formatHtmlReport(dummyReport);
+    expect(html).toContain('<span class="badge badge-pass" role="status">✔ PASS</span>');
+    expect(html).toContain('<span class="badge badge-warn" role="status">⚠ WARNING</span>');
+    expect(html).toContain('class="finding severity-pass"');
+    expect(html).toContain('class="finding severity-warn"');
+    expect(html).toContain('<progress class="score-bar" max="100" value="95"');
+
+    // Severity must remain readable even when the stylesheet is removed.
+    const unstyled = html.replace(/<style>[\s\S]*<\/style>/, '');
+    expect(unstyled).toContain('PASS');
+    expect(unstyled).toContain('WARNING');
+  });
+
+  it('renders a report with representative error and info findings', () => {
+    const representativeReport: AnchorReport = {
+      ...dummyReport,
+      grade: 'C',
+      score: 60,
+      findings: [
+        ...dummyReport.findings,
+        {
+          id: 'sep10-timebounds',
+          category: 'SEP-0010',
+          severity: 'error',
+          title: 'Timebounds Too Long',
+          message: 'Challenge timebounds exceed 300s.',
+          remediation: 'Reduce the challenge window.',
+          specUrl: 'https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md',
+        },
+        {
+          id: 'sep1-passphrase',
+          category: 'SEP-0001',
+          severity: 'info',
+          title: 'Testnet Passphrase',
+          message: 'Anchor targets Stellar Testnet.',
+        },
+      ],
+      summary: { pass: 1, info: 1, warn: 1, error: 1, total: 4 },
+    };
+    const html = formatHtmlReport(representativeReport);
+
+    expect(html).toContain('<span class="badge badge-error" role="status">✖ ERROR</span>');
+    expect(html).toContain('<span class="badge badge-info" role="status">ℹ INFO</span>');
+    expect(html).toContain('Timebounds Too Long');
+    expect(html).toContain('Reduce the challenge window.');
+    expect(html).toContain('sep-0010.md');
+    expect(html).toContain('class="finding severity-error"');
+    expect(html).toContain('class="finding severity-info"');
+    expect(html).toContain('>1<');
+  });
+
+  it('escapes report-derived text so it cannot inject markup', () => {
+    const maliciousReport: AnchorReport = {
+      ...dummyReport,
+      domain: 'anchor.<script>alert("xss")</script>.com',
+      findings: [
+        {
+          id: 'xss',
+          category: 'SECURITY',
+          severity: 'error',
+          title: "<img src=x onerror=alert('xss')>",
+          message: '& < > " \' payload',
+          remediation: "Fix <script> injection",
+          specUrl: 'https://example.com/?a=1&b=2"onmouseover="x',
+        },
+      ],
+      endpoints: { ...dummyReport.endpoints, authServerUrl: '<script>alert(2)</script>' },
+    };
+    const html = formatHtmlReport(maliciousReport);
+
+    expect(html).not.toContain('<script>alert("xss")</script>');
+    expect(html).not.toContain('<script>alert(2)</script>');
+    expect(html).not.toContain('<img src=x');
+    // Escaping leaves the payload as inert text: the literal "<" of the payload
+    // is always encoded, so it can never open a real markup tag with an attribute.
+    expect(html).not.toMatch(/<(\w+)[^>]*\sonerror\s*=/i);
+    expect(html).toContain('&lt;script&gt;alert');
+    expect(html).toContain('&lt;img src=x');
+    expect(html).toContain('&amp; &lt; &gt; &quot; &#39; payload');
+  });
+
+  it('produces a self-contained document without external resources', () => {
+    const html = formatHtmlReport(dummyReport);
+    expect(html).not.toContain('<link');
+    expect(html).not.toContain('<script src=');
+    expect(html).not.toContain('@import');
+    expect(html).not.toContain('<img');
+  });
+
+  it('escapes HTML metacharacters in arbitrary strings', () => {
+    expect(escapeHtml(`<a href="x">'&`)).toBe('&lt;a href=&quot;x&quot;&gt;&#39;&amp;');
+    expect(escapeHtml('plain text')).toBe('plain text');
   });
 });

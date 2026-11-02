@@ -114,6 +114,9 @@ node ./bin/stellar-anchor-doctor.js anchor.example.com --format markdown
 # Output a standalone HTML report (for sharing with stakeholders)
 node ./bin/stellar-anchor-doctor.js anchor.example.com --format html > report.html
 
+# Output a SARIF 2.1.0 report (for GitHub code scanning and other SARIF consumers)
+node ./bin/stellar-anchor-doctor.js anchor.example.com --format sarif > anchor-doctor.sarif
+
 # Treat warnings as errors (fail with exit code 1)
 node ./bin/stellar-anchor-doctor.js anchor.example.com --strict
 
@@ -132,7 +135,7 @@ node ./bin/stellar-anchor-doctor.js list-checks
 | Flag | Default | Description |
 | :--- | :--- | :--- |
 | `[domain]` | *required* | Apex domain or hostname of the anchor to audit |
-| `-f, --format <fmt>` | `text` | Output reporter format: `text`, `json`, `markdown`, or `html` |
+| `-f, --format <fmt>` | `text` | Output reporter format: `text`, `json`, `markdown`, `html`, or `sarif` |
 | `--strict` | `false` | Treat warnings as errors and exit with code `1` |
 | `--skip <checks>` | `none` | Comma-separated check IDs to bypass (e.g. `sep-38,sep-6`) |
 | `--timeout <ms>` | `8000` | Network request timeout in milliseconds |
@@ -190,6 +193,26 @@ jobs:
 - **Domain configuration:** Define an `ANCHOR_DOMAIN` [repository variable](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables) (for example, `anchor.example.com`) under **Settings → Secrets and variables → Actions → Variables**, and pass it to the CLI via `${{ vars.ANCHOR_DOMAIN }}`. Add `--testnet` if the target anchor operates on Stellar Testnet.
 - **Failure behavior (`--strict`):** By default, the CLI exits with code `1` only when diagnostic errors (`error`) are found, allowing warnings (`warn`) to pass with exit code `0`. Passing `--strict` treats warnings as errors and causes the workflow step to fail with exit code `1` on any warning or error.
 - **Live network requests:** This workflow performs live HTTPS requests against the configured domain's `/.well-known/stellar.toml` and discovered SEP endpoints (including SEP-10 challenge generation). Only run it against anchor deployments you own or are explicitly authorized to test.
+
+### SARIF output
+
+`--format sarif` emits a [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) JSON document to stdout. Each non-passing finding becomes a result: `error` findings map to `error`, `warn` findings to `warning`, and `info` findings to `note`; `pass` findings are omitted. The document includes the SARIF `version` and `$schema` fields, tool metadata, and one rule per reported finding. The CLI does not upload results or call the GitHub API.
+
+To view findings in GitHub code scanning, write the output to a file and upload it with [`actions/upload-sarif`](https://github.com/github/codeql-action/tree/main/upload-sarif):
+
+```yaml
+      - name: Run anchor audit (SARIF)
+        env:
+          ANCHOR_DOMAIN: ${{ vars.ANCHOR_DOMAIN }}
+        run: node ./bin/stellar-anchor-doctor.js "$ANCHOR_DOMAIN" --format sarif > anchor-doctor.sarif
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: anchor-doctor.sarif
+```
+
+Uploading requires the workflow to have `security-events: write` permission. The audit step should use `continue-on-error` or separate steps if you want SARIF uploaded even when the audit exits with code `1`.
 
 ---
 

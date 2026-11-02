@@ -11,5 +11,6 @@ export * from './reporters/text.js';
 export * from './reporters/json.js';
 export * from './reporters/markdown.js';
 export * from './reporters/html.js';
+export * from './reporters/sarif.js';
 export * from './utils/http.js';
 export * from './utils/stellar.js';
